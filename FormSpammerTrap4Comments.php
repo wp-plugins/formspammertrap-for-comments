@@ -4,7 +4,7 @@
  * Plugin Name: FormSpammerTrap for Comments
  * Plugin URI: http://FormSpammerTrap.com/wordpress-plugin-details.php
  * Description: Adds trapping for Spam and Form Bots on Comment forms without annoying Captchas, hidden fields, or other tricks that do not work. Looks for 'human activity' on the comment form; non-humans (bots) get sent to the <a href='http://www.FormSpammerTrap.com' target='_blank'>FormSpammerTrap.com</a> site, and their spam comment is discarded. Also allows you to limit the number of URLs in a message by removing excess URLs, and change the text that appears before or after the comment form fields. Settings are in the Settings, 'FormSpammerTrap for Comment Settings' menu.
- * Version: 1.0
+ * Version: 1.01 (16-Feb-2015)
  * Author: Rick Hellewell
  * Author URI: http://CellarWeb.com
  * Text Domain: 
@@ -75,23 +75,24 @@ class MySettingsPage
         // Set class property
         $this->options = get_option( 'fst4c_options' );
         ?>
-        <div class="wrap">
-            <?php screen_icon(); ?>
-            <h2>FormSpammerTrap for Comments Settings</h2>
-			<h4>Version  <?php echo $this->options[the_version]; ?> </h4>
-			<?php fst4c_info_top(); ?>           
-            <form method="post" action="options.php">
-            <?php
+
+<div class="wrap">
+	<?php screen_icon(); ?>
+	<h2>FormSpammerTrap for Comments Settings</h2>
+	<h4>Version <?php echo $this->options[the_version]; ?> </h4>
+	<?php fst4c_info_top(); ?>
+	<form method="post" action="options.php">
+		<?php
                 // This prints out all hidden setting fields
                 settings_fields( 'my_option_group' );   
                 do_settings_sections( 'fst4c-setting-admin' );
                 submit_button(); 
             ?>
-            </form>
-			<?php fst4c_info_bottom();		// display bottom info stuff
+	</form>
+	<?php fst4c_info_bottom();		// display bottom info stuff
 			?>
-        </div>
-        <?php
+</div>
+<?php
     }
 
     /**
@@ -113,7 +114,7 @@ class MySettingsPage
         );  
         add_settings_field(
             'the_version', 
-            'FormSpammerTrap for Comments Version', 
+            'FormSpammerTrap for Comments version', 
             array( $this, 'the_version_callback' ), // Callback, determines function that builds the input tag
             'fst4c-setting-admin', 
             'setting_section_id', // Section           
@@ -173,6 +174,24 @@ class MySettingsPage
             'setting_section_id', // Section           
 			array('fieldtype' => 'checkbox', 'fieldsize' => null, 'fieldmax' => null )
         );      
+
+        add_settings_field(
+            'wrap_required_text', 
+            'Wrap the \'required\' text under the field label?', 
+            array( $this, 'wrap_required_text_callback' ), // Callback, determines function that builds the input tag
+            'fst4c-setting-admin', 
+            'setting_section_id', // Section           
+			array('fieldtype' => 'checkbox', 'fieldsize' => null, 'fieldmax' => null )
+        );      
+
+        add_settings_field(
+            'reply_to_name', 
+            'Add the commenter\'s name to the Reply link text', 
+            array( $this, 'reply_to_name_callback' ), // Callback, determines function that builds the input tag
+            'fst4c-setting-admin', 
+            'setting_section_id', // Section           
+			array('fieldtype' => 'checkbox', 'fieldsize' => null, 'fieldmax' => null )
+        );      
     }
 
     /**
@@ -208,6 +227,12 @@ class MySettingsPage
         if( isset( $input['show_fst_message'] ) ) 
 			$new_input['show_fst_message'] = "1";
 
+        if( isset( $input['wrap_required_text'] ) ) 
+			$new_input['wrap_required_text'] = "1";
+
+        if( isset( $input['reply_to_name'] ) ) 
+			$new_input['reply_to_name'] = "1";
+
         return $new_input;
     }
 
@@ -226,7 +251,7 @@ class MySettingsPage
     public function the_version_callback()
     {
        printf(
-            '<input type="text" type="hidden" id="the_version" name="fst4c_options[the_version]" value="1.00" readonly="readonly" />',
+            '<input type="text" type="hidden" id="the_version" name="fst4c_options[the_version]" value="1.01 (20-Feb-2015)" readonly="readonly" width="5" maxlength="5" />',
             isset( $this->options['the_version'] ) ? esc_attr( $this->options['the_version']) : esc_attr( $this->options['the_version'])
         );
     }
@@ -237,7 +262,7 @@ class MySettingsPage
     public function text_before_callback()
     {
         printf(
-            '<textarea id="text_before" name="fst4c_options[text_before]" cols="60" rows="3" >%s </textarea>',
+            '<table><tr><td><textarea id="text_before" name="fst4c_options[text_before]" cols="60" rows="3" >%s </textarea></td><td valign="top">Enter the text you want to appear above the comment text area. Leave this blank to use the default text.</td></tr></table>',
             isset( $this->options['text_before'] ) ? esc_attr( $this->options['text_before']) : ''
         );
     }
@@ -247,7 +272,7 @@ class MySettingsPage
     public function text_after_callback()
     {
         printf(
-            '<textarea id="text_after" name="fst4c_options[text_after]"  cols="60" rows="3">%s </textarea>',
+            '<table><tr><td><textarea id="text_after" name="fst4c_options[text_after]"  cols="60" rows="3">%s </textarea></td><td valign="top">Enter the text you want to appear below the comment text area; just above the submit button. Leave this blank to use the default text.</td></tr></table>',
             isset( $this->options['text_after'] ) ? esc_attr( $this->options['text_after']) : ''
         );
     }
@@ -257,7 +282,7 @@ class MySettingsPage
     public function name_email_req_callback()	// require name and email checkbox
     {
 	 printf(
-            "<input type='checkbox' id='name_email_req' name='fst4c_options[name_email_req]'   value='1' " . checked( '1', $this->options[name_email_req] , false ) . " /> ",
+            "<table><tr><td><input type='checkbox' id='name_email_req' name='fst4c_options[name_email_req]'   value='1' " . checked( '1', $this->options[name_email_req] , false ) . " /></td><td valign='top'>Check this box to required the name and email field entry. This overrides the Settings, Discussion setting. Uncheck to use the Settings, Discussion setting.</td></tr></table> ",
             isset($this->options['name_email_req'] ) ?  '1' : '0'
         );
     }
@@ -267,7 +292,7 @@ class MySettingsPage
     public function urls_allowed_callback()
     {
         printf(
-            '<input type="text" id="urls_allowed" name="fst4c_options[urls_allowed]" value="%s" size="1" maxlength="1" />',
+            '<table><tr><td><input type="text" id="urls_allowed" name="fst4c_options[urls_allowed]" value="%s" size="1" maxlength="1" /></td><td valign="top">Enter the number of URLs allowed in the comment area (0-9). Most spammers will try to include lots of URLs in comment. We recommend no more than 1 URL in a comment. Any excess URLs will be redacted or deleted (see next option).</td></tr></table>',
             isset( $this->options['urls_allowed'] ) ? esc_attr( $this->options['urls_allowed']) : ''
         );
     }
@@ -277,7 +302,7 @@ class MySettingsPage
     public function url_redacted_callback()	// require name and email checkbox
     {
 	 printf(
-            "<input type='checkbox' id='url_redacted' name='fst4c_options[url_redacted]'   value='1' " . checked( '1', $this->options[url_redacted] , false ) . " /> ",
+            "<table><tr><td><input type='checkbox' id='url_redacted' name='fst4c_options[url_redacted]'   value='1' " . checked( '1', $this->options[url_redacted] , false ) . " /></td><td valign='top'>Check this box to replace excess URLs with [URL Redacted]. Unchecked will just remove excess URLSs.</td></tr></table> ",
             isset($this->options['url_redacted'] ) ?  '1' : '0'
         );
     }
@@ -287,11 +312,31 @@ class MySettingsPage
     public function show_fst_message_callback()	// require name and email checkbox
     {
 	 printf(
-            "<input type='checkbox' id='show_fst_message' name='fst4c_options[show_fst_message]'   value='1' " . checked( '1', $this->options[show_fst_message] , false ) . " /> ",
+            "<table><tr><td><input type='checkbox' id='show_fst_message' name='fst4c_options[show_fst_message]'   value='1' " . checked( '1', $this->options[show_fst_message] , false ) . " /></td><td valign='top'>Check this box to let the visitor know that spammers go to the FormSpammerTrap.com web site. Unchecked will not display the message. Useful to alert visitors that any form spam will be sent away from your site.</td></tr></table> ",
             isset($this->options['show_fst_message'] ) ?  '1' : '0'
         );
     }
-
+    /** 
+     * Get the settings option array and print one of its values
+     */
+    public function wrap_required_text_callback()	// wrap the required text in the label area (needed for some themes)
+    {
+	 printf(
+            "<table><tr><td><input type='checkbox' id='wrap_required_text' name='fst4c_options[wrap_required_text]'   value='1' " . checked( '1', $this->options[wrap_required_text] , false ) . " /></td><td valign='top'>Check this box to force the 'required' text on a separate line in the label area to the left of input fields. This is needed on some themes that don't have enough room for that text in the label area. Leave unchecked leave the 'required' text just after the field label. Note that not all themes put a label next to the input fields.</td></tr></table> ",
+            isset($this->options['wrap_required_text'] ) ?  '1' : '0'
+        );
+    }
+	
+    /** 
+     * Get the settings option array and print one of its values
+     */
+    public function reply_to_name_callback()	// wrap the required text in the label area (needed for some themes)
+    {
+	 printf(
+            "<table><tr><td><input type='checkbox' id='reply_to_name' name='fst4c_options[reply_to_name]'   value='1' " . checked( '1', $this->options[reply_to_name] , false ) . " /></td><td valign='top'>Enable to add the name of the commenter to the Reply link text on comments. So a comment from 'Rick H' will have a reply link text of 'Reply to Rick H' (it uses the full name from the author field or the logged in user). Leave blank to use the standard 'Reply' link text. Note that some themes many not support this option.</td></tr></table> ",
+            isset($this->options['reply_to_name'] ) ?  '1' : '0'
+        );
+    }
 }
 
 if( is_admin() )
@@ -303,13 +348,17 @@ if( is_admin() )
 //	display the top info part of the page	
 // ---------------------------------------------------------------------------- 
 function fst4c_info_top() {
+
+$image = WP_PLUGIN_URL . '/FormSpammerTrap4Comments/assets/icon-128x128.png';
+
 	?>
-	<div class="wrap">
-	<p>FormSpammerTrap 4 Comments adds form spam bot blocking to your comment form.</p><p>It senses human interaction with the comment form. It does not require those irritating captchas, hidden fields, silly questions, or aother annoying things others use to try to (but fail to) block spam-bots.</p>
-<p>If a spam-bot tries to submit a comment, they will be sent to our <a href="http://formspammertrap.com" title="FormSpammerTrap.com" alt="FormSpammerTrap.com">FormSpammerTrap</a> page, and you will not see the spam-bot comment on your system.</p>
-<p>You will find more information at our <a href="http://formspammertrap.com" title="FormSpammerTrap.com" alt="FormSpammerTrap.com">FormSpammerTrap</a> web site. We also have solutions for WordPress comment forms and custom-built sites. You can contact us with any questions or issues on that site.</p>
-<hr>
-<!--<p><strong>These options are available:</strong></p>-->
+<div class="wrap"> <img src="<?php echo $image; ?>" />
+	<p>FormSpammerTrap 4 Comments adds form spam bot blocking to your comment form.</p>
+	<p>It senses human interaction with the comment form. It does not require those irritating captchas, hidden fields, silly questions, or aother annoying things others use to try to (but fail to) block spam-bots.</p>
+	<p>If a spam-bot tries to submit a comment, they will be sent to our <a href="http://formspammertrap.com" title="FormSpammerTrap.com" alt="FormSpammerTrap.com">FormSpammerTrap</a> page, and you will not see the spam-bot comment on your system.</p>
+	<p>You will find more information at our <a href="http://formspammertrap.com" title="FormSpammerTrap.com" alt="FormSpammerTrap.com">FormSpammerTrap</a> web site. We also have solutions for WordPress comment forms and custom-built sites. You can contact us with any questions or issues on that site.</p>
+	<hr>
+	<!--<p><strong>These options are available:</strong></p>--> 
 </div>
 <?php 
 
@@ -400,8 +449,8 @@ add_action( 'wp_head', 'force_insert_fst_code' ,99);
 // ---------------------------------------------------------------------------- 
 //	- this section adds formspammertrap_CL() function code
 //	random variable string: $token = bin2hex(openssl_random_pseudo_bytes(16));
-function formspammertrap_cl_script() {
-	?>
+function fst4c_cl_script() {
+?>
 <script type="text/javascript">
 	<!--
 	var Clicked =0;
@@ -417,54 +466,55 @@ function formspammertrap_cl_script() {
 	elem.action=formspammertrap_code_1099287+formspammertrap_code_8893894;
 	}
 	-->
-	</script> 
+</script>
 <?php
 	return; }
 
-add_action('wp_head', 'formspammertrap_cl_script');
+add_action('wp_head', 'fst4c_cl_script');
 
 // ---------------------------------------------------------------------------- 
 // this is the new comment fields with the CL() added to onclick/onfocus for required fields only
 //		excludes the comment text area 
 //		replaces any customization of the comment form fields
-function formspammertrap_comment_form_fields( $fields ) {
-	$xoptions = get_option( 'fst4c_options' );
+
+function fst4c_comment_form_fields( $fields ) {
+$xoptions = get_option( 'fst4c_options' );
 $req = $xoptions['name_email_req'] ;
+if ($xoptions['wrap_required_text']) {	$wrap_req_text = '<br>Required';} else {$wrap_req_text = '&nbsp;&nbsp;Required';	}
 $aria_req = ( $req ? " aria-required='true' required='true' " :" aria-required= 'false' required='false' " );
 $aria_req_in_placeholder = ( $req ? '(* required) ':'' );
 unset($GLOBALS[$fields]);		// clear out any existing comment form fields
 $fields = array();
 $fields =  array(
 // get the required fields
-  'author' =>
-    '<p class="comment-form-author"><label for="author">' . __( 'Your Name', 'domainreference' ) .
-    ( $req ? '<span class="required">&nbsp;*&nbsp;(required)</span>' . '</label> ' : '' ) .
-    '<input placeholder="Your Name ' . $aria_req_in_placeholder . ' " id="author" name="author" type="text" onclick="formspammertrap_CL();" onfocus="formspammertrap_CL();" value="' . esc_attr( $commenter['comment_author'] ) .
-    '" size="30"' . $aria_req . ' /></p>',
+'author' =>
+'<p class="comment-form-author"><label for="author">' . __( 'Your Name', 'domainreference' ) .
+( $req ? '<span class="required">' . $wrap_req_text . '</span>' . '</label> ' : '' ) .
+'<input placeholder="Your Name ' . $aria_req_in_placeholder . ' " id="author" name="author" type="text" onclick="formspammertrap_CL();" onfocus="formspammertrap_CL();" value="' . esc_attr( $commenter['comment_author'] ) .
+'" size="30"' . $aria_req . ' /></p>',
 
-  'email' =>
-    '<p class="comment-form-email"><label for="email">' . __( 'Your Email', 'domainreference' )  .
-    ( $req ? '<span class="required">&nbsp;*&nbsp;(required)</span>' . '</label> ' : '' ) .
-    '<input placeholder="Your Email ' . $aria_req_in_placeholder . ' " id="email" name="email" type="text"  onclick="formspammertrap_CL()" onfocus="formspammertrap_CL()" value="' . esc_attr(  $commenter['comment_author_email'] ) .
-    '" size="30"' . $aria_req . ' /></p>',
+'email' =>
+'<p class="comment-form-email"><label for="email">' . __( 'Your Email', 'domainreference' )  .
+( $req ? '<span class="required">' . $wrap_req_text . '</span>' . '</label> ' : '' ) .
+'<input placeholder="Your Email ' . $aria_req_in_placeholder . ' " id="email" name="email" type="text"  onclick="formspammertrap_CL()" onfocus="formspammertrap_CL()" value="' . esc_attr(  $commenter['comment_author_email'] ) .
+'" size="30"' . $aria_req . ' /></p>',
 
-  'url' =>
-    '<p class="comment-form-url"><label for="url">' . __( 'Your Website', 'domainreference' ) . '</label>' .
-    '<input placeholder="Your Web Site" id="url" name="url" type="text" value="' . esc_attr( $commenter['comment_author_url'] ) .
-    '" size="30" /></p>'
-	
-	// you would think that you would put the comment textarea here, but nope. 
-	// it needs to use the comment_form_defaults hook, not comment_form_default_fields hook
-	// 		(code left here for reference)
-	//	,
-	//	
-	//	'comment_field' =>  '<p class="comment-form-comment"><label for="comment">' . _x( 'Your Comment', 'noun' ) .
-	//    '<span class="required">*&nbsp;(required)</span></label><textarea placeholder="Your Comments" id="comment" name="comment" cols="45" rows="8" aria-required="true" required="required"  >' .
-	//    '</textarea></p>'
-	
-	);
-	return $fields; 
-	}
+'url' =>
+'<p class="comment-form-url"><label for="url">' . __( 'Your Website', 'domainreference' ) . '</label>' .
+'<input placeholder="Your Web Site" id="url" name="url" type="text" value="' . esc_attr( $commenter['comment_author_url'] ) .
+'" size="30" /></p>'
+
+// you would think that you would put the comment textarea here, but nope. 
+// it needs to use the comment_form_defaults hook, not comment_form_default_fields hook
+// 		(code left here for reference)
+//	,
+//	
+//	'comment_field' =>  '<p class="comment-form-comment"><label for="comment">' . _x( 'Your Comment', 'noun' ) .
+//    '<span class="required">*&nbsp;(required)</span></label><textarea placeholder="Your Comments" id="comment" name="comment" cols="45" rows="8" aria-required="true" required="required"  >' .
+//    '</textarea></p>'
+
+);
+return $fields; }
 add_filter( 'comment_form_default_fields', 'formspammertrap_comment_form_fields',9,1 );
 
 // ---------------------------------------------------------------------------- 
@@ -472,14 +522,17 @@ add_filter( 'comment_form_default_fields', 'formspammertrap_comment_form_fields'
 //// this blocks spam bots from the comment field 
 // note: this must be installed by the comment_form_defaults hook, not the comment_form_default_fields hook,
 //		otherwise, you get duplicate comment textareas!
-function wpsites_modify_comment_form_text_area($arg) {
+function fst4c_modify_comment_form_text_area($arg) {
+
+	$xoptions = get_option( 'fst4c_options' );
+	if ($xoptions['wrap_required_text']) {	$wrap_req_text = '<br>Required';} else {$wrap_req_text = '&nbsp;&nbsp;Required';	}
 
 	$arg['comment_field'] = 
-	 '<p class="comment-form-comment"><label for="comment"  class="rick">Your Comment<span class="required">&nbsp;*&nbsp;(required)</span></label><textarea placeholder="Your Comment (* required)" id="comment" name="comment" cols="45" rows="12" onclick="formspammertrap_CL();" onfocus="formspammertrap_CL();" aria-required="true" required="required" ></textarea></p>'
+	 '<p class="comment-form-comment"><label for="comment"  class="rick">Your Comment<span class="required">' . $wrap_req_text . '</span></label><textarea placeholder="Your Comment (* required)" id="comment" name="comment" cols="45" rows="12" onclick="formspammertrap_CL();" onfocus="formspammertrap_CL();" aria-required="true" required="required" ></textarea></p>'
 ;
 	return $arg; 
 	}
-add_filter('comment_form_defaults', 'wpsites_modify_comment_form_text_area',9,1); 
+add_filter('comment_form_defaults', 'fst4c_modify_comment_form_text_area',9,1); 
 
 // ---------------------------------------------------------------------------- 
 // set the message after the comment form
@@ -487,7 +540,7 @@ function fst4c_text_around_comment_form($arg) {
 	$xoptions = get_option( 'fst4c_options' );
 	$xtext_before_comment = $xoptions['text_before'];
 	if ($xoptions[urls_allowed]) {
-	$xtext_before_comment .= ' <em>You are allowed to enter ' . $xoptions[urls_allowed] . ' URL(s) in the comment area.</em>'; } else {$xtext_before_comment .= ' <em>You are not allowed to enter any URLs in the comment area.</em>';
+		$xtext_before_comment .= ' <em>You are allowed to enter ' . $xoptions[urls_allowed] . ' URL(s) in the comment area.</em>'; } else {$xtext_before_comment .= ' <em>You are not allowed to enter any URLs in the comment area.</em>';
 	}
 	$xtext_after_comment = $xoptions['text_after'];
 	if ($xtext_before_comment) {
@@ -496,7 +549,7 @@ function fst4c_text_around_comment_form($arg) {
 	if ($xtext_after_comment) {
 		if ($xoptions['show_fst_message']) {
 		$xtext_after_comment .= '<p align="center" class="form-allowed-tags"><em>Form filling spam bots are redirected to the <a href="http://formspammertrap.com" title="FormSpammerTrap.com" target="_blank">FormSpammerTrap.com</a> web site.</em></p>';}
-		$arg['comment_notes_after'] = '<p class="form-allowed-tags" align="center">' . sprintf( __( $xtext_after_comment )) . '</p></div>';
+		$arg['comment_notes_after'] = '<p class="form-allowed-tags" align="center">' . sprintf( __( $xtext_after_comment )) . '</p>';
 	}
 	return $arg;
 }
@@ -504,7 +557,7 @@ add_filter('comment_form_defaults', 'fst4c_text_around_comment_form',9,1);
 
 // ---------------------------------------------------------------------------- 
 // check for too many urls in the comment content
-function preprocess_comment_remove_url( $commentdata ) {
+function fst4c_comment_remove_url( $commentdata ) {
 
 	// get the urls_allowed value
 	$xoptions = get_option('fst4c_options');
@@ -530,8 +583,47 @@ function preprocess_comment_remove_url( $commentdata ) {
 	$commentdata['comment_content'] = $text;
 	return $commentdata;
 }
-add_filter( 'preprocess_comment' , 'preprocess_comment_remove_url' ); 
+add_filter( 'preprocess_comment' , 'fst4c_comment_remove_url' ); 
 // ---------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------
+/*
+ * Change the comment reply link to use 'Reply to &lt;Author First Name>'
+ from https://raam.org/2013/personalizing-the-wordpress-comment-reply-link/
+ */
+function fst4c_add_comment_author_to_reply_link($link, $args, $comment){
+
+    $comment = get_comment( $comment );
+
+    // If no comment author is blank, use 'Anonymous'
+    if ( empty($comment->comment_author) ) {
+        if (!empty($comment->user_id)){
+            $user=get_userdata($comment->user_id);
+            $author=$user->user_login;
+        } else {
+            $author = __('Anonymous');
+        }
+    } else {
+        $author = $comment->comment_author;
+    }
+
+	// If the user provided more than a first name, use only first name
+	    if(strpos($author, ' ')){
+	        $author = substr($author, 0, strpos($author, ' '));
+	    }
+
+    // Replace Reply Link with "Reply to &lt;Author First Name>"
+    $reply_link_text = $args['reply_text'];
+    $link = str_replace($reply_link_text, 'Reply to ' . $author, $link);
+	
+    return $link;
+}
+// get the option and add the filter if option enabled
+	$xoptions = get_option( 'fst4c_options' );
+	$xreply_to_name = $xoptions['reply_to_name'];
+	if ($xreply_to_name) {
+		add_filter('comment_reply_link', 'fst4c_add_comment_author_to_reply_link', 10, 3);  
+	}
+	
 // ---------------------------------------------------------------------------- 
 // ---------------------------------------------------------------------------- 
 // grabs the code from the plugin: https://wordpress.org/plugins/comment-form-inline-errors/
@@ -757,4 +849,9 @@ new wpCommentFormInlineErrors();
 
 // ---------------------------------------------------------------------------- 
 // ---------------------------------------------------------------------------- 
+
+
+
+
+
 
