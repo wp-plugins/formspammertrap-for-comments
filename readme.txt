@@ -143,6 +143,8 @@ We do lots of WordPress sites: implementation, customization, and more. You can 
 
 
 == Upgrade Notice ==
+= 1.02 =
+Released 17 Feb 2015 - fixed a but that snuck in during some code optimization that may cause errors to display in the comment area.
 
 = 1.01 = 
 Released 16 Feb 2015 - Fixed a display bug with threaded comments, added explanatory text on the settings page, added additional features.
