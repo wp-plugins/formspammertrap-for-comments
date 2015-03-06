@@ -3,8 +3,8 @@
 /**
 	* Plugin Name: FormSpammerTrap for Comments
 	* Plugin URI: http://FormSpammerTrap.com/wordpress-plugin-details.php
-	* Description: Adds trapping for Spam and Form Bots on Comment forms without annoying Captchas, hidden fields, or other tricks that do not work. Looks for 'human activity' on the comment form; non-humans (bots) get sent to the <a href='http://www.FormSpammerTrap.com' target='_blank'>FormSpammerTrap.com</a> site, and their spam comment is discarded. Also allows you to limit the number of URLs in a message by removing excess URLs, and change text that appears before/after the comment form fields. Settings are in the Settings, 'FormSpammerTrap for Comment Settings' menu.
-	* Version: 1.04 (23-Feb-2015)
+	* Description: Stops Spam and Form bots from using your Comment forms without annoying Captchas, hidden fields, or other tricks that do not work. Looks for 'human activity' on the comment form; non-humans (bots) get sent to the <a href='http://www.FormSpammerTrap.com' target='_blank'>FormSpammerTrap.com</a> site, and their spam comment is discarded. Also allows you to limit the number of URLs in a message by removing excess URLs, and change text that appears before/after the comment form fields. Settings are in the Settings, 'FormSpammerTrap for Comment Settings' menu.
+	* Version: 1.05 
 	* Author: Rick Hellewell
 	* Author URI: http://CellarWeb.com
 	* Text Domain: 
@@ -204,9 +204,9 @@ class MySettingsPage
 		);	  
 
 		add_settings_field(
-			'title_reply_to', 
+			'reply_to_text', 
 			'Change the "Reply to" text', 
-			array( $this, 'title_reply_to_callback' ), 
+			array( $this, 'reply_to_text_callback' ), 
 			'fst4c-setting-admin', 
 			'setting_section_id', // Section		   
 			array('fieldtype' => 'checkbox', 'fieldsize' => null, 'fieldmax' => null )
@@ -274,8 +274,8 @@ class MySettingsPage
 		if( isset( $input['title_reply'] ) ) 
 			$new_input['title_reply'] = sanitize_text_field( $input['title_reply'] );
 
-		if( isset( $input['title_reply_to'] ) ) 
-			$new_input['title_reply_to'] = sanitize_text_field( $input['title_reply_to'] );
+		if( isset( $input['reply_to_text'] ) ) 
+			$new_input['reply_to_text'] = sanitize_text_field( $input['reply_to_text'] );
 
 		if( isset( $input['cancel_reply_link'] ) ) 
 			$new_input['cancel_reply_link'] = sanitize_text_field( $input['cancel_reply_link'] );
@@ -295,7 +295,7 @@ class MySettingsPage
 	public function the_version_callback()
 	{
 	   printf(
-			'<input type="text" type="hidden" id="the_version" name="fst4c_options[the_version]" value="1.04 (23-Feb-2015)" readonly="readonly" width="5" maxlength="5" />',
+			'<input type="text" type="hidden" id="the_version" name="fst4c_options[the_version]" value="1.05 (6-Mar-2015)" readonly="readonly" width="5" maxlength="5" />',
 			isset( $this->options['the_version'] ) ? esc_attr( $this->options['the_version']) : esc_attr( $this->options['the_version'])
 		);
 	}
@@ -313,7 +313,7 @@ class MySettingsPage
 	public function text_after_callback()
 	{
 		printf(
-			'<table><tr><td><textarea id="text_after" name="fst4c_options[text_after]"  cols="60" rows="3">%s </textarea></td><td valign="top">Enter the text you want to appear below the comment text area; just above the submit button. Leave this blank to use the default text. (No HTML codes allowed.)</td></tr></table>',
+			'<table><tr><td><textarea id="text_after" name="fst4c_options[text_after]"  cols="60" rows="3">%s </textarea></td><td valign="top">Enter the text you want to appear below the comment text area; just above the submit button. Leave this blank to use the default text. (No HTML codes allowed.)<br> Note that this will replace the default text that shows what HTML code is allowed.</td></tr></table>',
 			isset( $this->options['text_after'] ) ? esc_attr( $this->options['text_after']) : ''
 		);
 	}
@@ -322,7 +322,7 @@ class MySettingsPage
 	public function name_email_req_callback()	// require name and email checkbox
 	{
 	 printf(
-			"<table><tr><td><input type='checkbox' id='name_email_req' name='fst4c_options[name_email_req]'   value='1' " . checked( '1', $this->options[name_email_req] , false ) . " /></td><td valign='top'>Check this box to required the name and email field entry. This overrides the Settings, Discussion setting. Uncheck to use the Settings, Discussion setting.</td></tr></table> ",
+			"<table><tr><td><input type='checkbox' id='name_email_req' name='fst4c_options[name_email_req]'   value='1' " . checked( '1', $this->options[name_email_req] , false ) . " /></td><td valign='top'>Check this box to require the name and email field entry. This overrides the Settings, Discussion setting. Uncheck to use the Settings, Discussion setting.</td></tr></table> ",
 			isset($this->options['name_email_req'] ) ?  '1' : '0'
 		);
 	}
@@ -383,11 +383,11 @@ class MySettingsPage
 	}
 	
 	// reply to callback
-	public function title_reply_to_callback()	// wrap the required text in the label area (needed for some themes)
+	public function reply_to_text_callback()	// wrap the required text in the label area (needed for some themes)
 	{
 	 printf(
-			"<table><tr><td><input type='text' id='title_reply_to' name='fst4c_options[title_reply_to]'   value='%s' size='20' maxlength='20'/></td><td valign='top'>The text replace the 'Leave a Reply to name' link (no HTML, just text). Leave this blank to use the default text of 'Leave a Reply to name'. Limit of 20 characters.</td></tr></table> ",
-			isset( $this->options['title_reply_to'] ) ? esc_attr( $this->options['title_reply_to']) : ''
+			"<table><tr><td><input type='text' id='reply_to_text' name='fst4c_options[reply_to_text]'   value='%s' size='20' maxlength='20'/></td><td valign='top'>The text replace the 'Leave a Reply to name' link (no HTML, just text). Leave this blank to use the default text of 'Leave a Reply to name'. Limit of 20 characters.</td></tr></table> ",
+			isset( $this->options['reply_to_text'] ) ? esc_attr( $this->options['reply_to_text']) : ''
 		);
 	}
 	
@@ -465,15 +465,60 @@ function fst4c_info_bottom() {
 // ---------------------------------------------------------------------------- 
 // start of operational area that changes the comments box stuff 		
 // ---------------------------------------------------------------------------- 
+// ---------------------------------------------------------------------------- 
+// add the javascript and other stuff only in the comment area, so it's not done in pages without comments		
+// adds the action at end of head with a late priority, to make sure jquery has had time to load
+
+// if jquery doesn't load, then something is really wrong, so this will probably never happen
+add_action("wp_head","check_for_jquery",99); 
+// insert the bogus action site for the form
+add_action( 'comment_form', 'change_comment_action' ,99);
+
+// insert the trapping functions on the fields
+add_action( 'comment_form', 'force_insert_fst_code' ,99);
+
+// add the cl function script
+add_action('comment_form', 'fst4c_cl_script',98);
+
+// ---------------------------------------------------------------------------- 
+// ---------------------------------------------------------------------------- 
+// ---------------------------------------------------------------------------- 
+// other things to do all at once
+// 	these are related to comment functions, so not used on non-comment pages
+
+// set up the new comment form fields
+add_filter( 'comment_form_default_fields', 'fst4c_comment_form_fields',9,1 );
+
+// adjust the before the comment form text area 
+add_filter('comment_form_defaults', 'fst4c_modify_comment_form_text_area',9,1); 
+
+// adjust after the comment form area
+add_filter('comment_form_defaults', 'fst4c_text_around_comment_form',9,1);
+
+// add reply to name thing
+add_filter('comment_reply_link', 'fst4c_adjust_title_reply',9,2);
+
+// preprocess comment after submitted to remove urls
+add_filter( 'preprocess_comment' , 'fst4c_comment_remove_url' ); 
+
+// catch if the non-displayed url field is not empty
+add_action('preprocess_comment', 'fst4c_url_field_catcher',8);
+
+// Add Nonce To Comment Form
+add_action('comment_form', 'fst4c_add_key');
+
+// Add Nonce Check To Comment Form Post processing
+add_action('pre_comment_on_post', 'fst4c_key_check');
+
+// ---------------------------------------------------------------------------- 
+// end of add_actions and add_filters for posts/pages with comments open
+// ---------------------------------------------------------------------------- 
+
+// ---------------------------------------------------------------------------- 
 // check to make sure jquery is loaded
 function check_for_jquery() {
 	if(!wp_script_is( 'jquery', $list = 'done' )) { return; }			// exit if jquery is not loaded (rare)
 	}
-// adds the action at end of head with a late priority, to make sure jquery has had time to load
-add_action("wp_head","check_for_jquery",99); 
-// end jquery check
-
-
 // ---------------------------------------------------------------------------- 
 // uses jquery to change the comment form's 'action' value after document ready
 function change_comment_action () {
@@ -487,8 +532,6 @@ function change_comment_action () {
 </script>
 <?php
 return; }
-
-add_action( 'wp_head', 'change_comment_action' ,99);
 
 // ---------------------------------------------------------------------------- 
 // use jquery to force the insert of the formspammertrap_cl() function inside the required fields
@@ -511,39 +554,41 @@ jQuery(document).ready(function(){
 
    jQuery('textarea#comment').attr('placeholder','Comment (*required)');
 
-
 });
 </script>
 <?php
 return; }
 
-add_action( 'wp_head', 'force_insert_fst_code' ,99);
-
 // ---------------------------------------------------------------------------- 
 //	- this section adds formspammertrap_CL() function code
 function fst4c_cl_script() {
+	$xguid1 = guid();
+	$xguid2 = guid();
 ?>
 <script type="text/javascript">
-	<!--
-	var Clicked =0;
-	-->
 	<!-- 
-	var formspammertrap_code_1099287= "<?php echo site_url( '/wp-comments-post.php' ); ?>";		// "comment_"
-	var formspammertrap_code_8893894= "";		// "action.php"
+	var formspammertrap_code_<?php echo $xguid1; ?> = "<?php echo site_url( '/wp-comments-post.php' ); ?>";		// "comment_"
+	var formspammertrap_code_<?php echo $xguid2; ?> = "";		// "action.php"
 	var FormID="commentform";	  // the name of the form, must match the form 'name' parameter
 	
 	function formspammertrap_CL() {
-	Clicked++;
 	var elem = document.getElementById("commentform");
-	elem.action=formspammertrap_code_1099287+formspammertrap_code_8893894;
+	elem.action=formspammertrap_code_<?php echo $xguid1; ?>+formspammertrap_code_<?php echo $xguid2; ?>;
 	}
 	-->
 </script>
 <?php
 	return; }
+	
+function guid()
+{
+    if (function_exists('com_create_guid') === true)
+    {
+        return trim(com_create_guid(), '{}');
+    }
 
-add_action('wp_head', 'fst4c_cl_script');
-
+    return sprintf('%04X%04X_%04X_%04X_%04X_%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+}
 // ---------------------------------------------------------------------------- 
 // this is the new comment fields with the CL() added to onclick/onfocus for required fields only
 //		required field includes the comment text area 
@@ -588,7 +633,6 @@ function fst4c_comment_form_fields( $fields ) {
 	
 	);
 	return $fields; }
-add_filter( 'comment_form_default_fields', 'fst4c_comment_form_fields',9,1 );
 
 // ---------------------------------------------------------------------------- 
 // ---------------------------------------------------------------------------- 
@@ -602,9 +646,17 @@ function fst4c_modify_comment_form_text_area($arg) {
 
 	$xoptions = get_option( 'fst4c_options' );
 	$xlabel_submit = $xoptions['submit_label'];
+
+//	if (is_single() ) { 
+//$xlabel_submit .= "611";
+//	}
+//	if (comments_open() ) { 
+//$xlabel_submit .= " 615";
+//	}
+
 	if ($xoptions['submit_label']) {$arg['label_submit'] = 	$xlabel_submit ;	}
 	if ($xoptions['title_reply']) {$arg['title_reply'] = '<p align="center">'. $xoptions['title_reply'] . '</p>';}
-	if ($xoptions['title_reply_to']) {$arg['title_reply_to'] =  $xoptions['title_reply_to'];}
+	if ($xoptions['reply_to_text']) {$arg['reply_to_text'] =  $xoptions['reply_to_text'];}
 	if ($xoptions['cancel_reply_link ']) {$arg['cancel_reply_link'] =  $xoptions['cancel_reply_link'];}
 
 	if ($xoptions['wrap_required_text']) {	$wrap_req_text = '<br>Required';} else {$wrap_req_text = '&nbsp;&nbsp;Required';	}
@@ -614,7 +666,6 @@ function fst4c_modify_comment_form_text_area($arg) {
 ;
 	return $arg; 
 	}
-add_filter('comment_form_defaults', 'fst4c_modify_comment_form_text_area',9,1); 
 
 // ---------------------------------------------------------------------------- 
 // set the message after the comment form
@@ -630,12 +681,11 @@ function fst4c_text_around_comment_form($arg) {
 	}
 	if ($xtext_after_comment) {
 		if ($xoptions['show_fst_message']) {
-		$xtext_after_comment .= '<p align="center" class="form-allowed-tags"><em>Form filling spam bots are redirected to the <a href="http://formspammertrap.com" title="FormSpammerTrap.com" target="_blank">FormSpammerTrap.com</a> web site.</em></p>';}
+		$xtext_after_comment .= '<br><em>Form filling spam bots are redirected to the <a href="http://formspammertrap.com" title="FormSpammerTrap.com" target="_blank">FormSpammerTrap.com</a> web site.</em>';}
 		$arg['comment_notes_after'] = '<p class="form-allowed-tags" align="center">' . sprintf( __( $xtext_after_comment )) . '</p>';
 	}
 	return $arg;
 }
-add_filter('comment_form_defaults', 'fst4c_text_around_comment_form',9,1);
 
 // ---------------------------------------------------------------------------- 
 // check for too many urls in the comment content
@@ -663,7 +713,6 @@ function fst4c_comment_remove_url( $commentdata ) {
 	$commentdata['comment_content'] = $text;
 	return $commentdata;	// excess urls stripped or replaced
 }
-add_filter( 'preprocess_comment' , 'fst4c_comment_remove_url' ); 
 // ---------------------------------------------------------------------------- 
 //  Change the comment reply link to use 'Reply to &lt;Author First Name>'
 //  idea based on https://raam.org/2013/personalizing-the-wordpress-comment-reply-link/
@@ -675,12 +724,12 @@ function fst4c_add_comment_author_to_reply_link($link, $args, $comment){
 	if ( empty($comment->comment_author) ) {
 		if (!empty($comment->user_id)){
 			$user=get_userdata($comment->user_id);
-			$author=$user->user_login;
+			$author=$user->user_login . '&nbsp;';
 		} else {
-			$author = __('Anonymous');
+			$author = __('Anonymous ');
 		}
 	} else {
-		$author = $comment->comment_author;
+		$author = $comment->comment_author . '&nbsp;';
 	}
 	// we don't use this next code block, since we want to use the whole name
 	// If the user provided more than a first name, use only first name
@@ -688,10 +737,10 @@ function fst4c_add_comment_author_to_reply_link($link, $args, $comment){
 	//		$author = substr($author, 0, strpos($author, ' '));
 	//	}
 
-	// Replace Reply Link with "Reply to &lt;Author First Name>"
+	// Replace Reply Link with "Reply to [Author Name]"
 	$reply_link_text = $args['reply_text'];
 	$link = str_replace($reply_link_text, 'Reply to ' . $author, $link);
-	
+		//die("line 743- " . $link);
 	return $link;
 }
 // get the option and add the filter if option enabled
@@ -706,17 +755,26 @@ function fst4c_adjust_title_reply($link, $args) {
 	$xoptions = get_option( 'fst4c_options' );
 	$xreply_to_name = $xoptions['reply_to_name'];
 	// adjust for custom title_reply value
-	$title_reply = $xoptions['title_reply'];
-	if ($xoptions['title_reply_to']) {$title_reply = $xoptions['title_reply_to'];}
-	// set a default value for the title_reply text
-	if (! $title_reply) {	$reply_title = "Reply&nbsp;";}
-	// adjust for custom title_title_reply_to value
-	if ($title_reply)  {
-		$link = str_replace($reply_link_text, 'Reply to ' . $author, $xreply_text);
-	}
-	return $link;
+	if (!$reply_to_name) {return $link; } 	// don't change anything
+    $comment = get_comment( $comment );
+ 
+    // If no comment author is blank, use 'Anonymous'
+    if ( empty($comment->comment_author) ) {
+        if (!empty($comment->user_id)){
+            $user=get_userdata($comment->user_id);
+            $author=$user->user_login;
+        } else {
+            $author = __('Anonymous');
+        }
+    } else {
+        $author = $comment->comment_author;
+    }
+    // Replace Reply Link with "Reply to &lt;Author First Name>"
+    $reply_link_text = $args['reply_text'];
+    $link = str_replace($reply_link_text, 'Reply to ' . $author, $link);
+ 
+    return $link;
 }
-add_filter('comment_reply_link', 'fst4c_adjust_title_reply',11,2);
 
 // ---------------------------------------------------------------------------- 
 // override any theme comment validation
@@ -737,7 +795,6 @@ function fst4c_url_field_catcher($commentdata) {
 return $commentdata;
 }
 
-add_action('preprocess_comment', 'fst4c_url_field_catcher',8);
 
 // ---------------------------------------------------------------------------- 
 // add the nonce key to the comment form, and check on submit
@@ -747,8 +804,6 @@ function fst4c_add_key() {
 	wp_nonce_field('fst4c_key');
 }
  
-// Add Nonce To Comment Form
-add_action('comment_form', 'fst4c_add_key');
  
 // Check Nonce Field Validity
 function fst4c_key_check() {
@@ -763,8 +818,6 @@ function fst4c_key_check() {
 	}
 }
  
-// Add Nonce Check To Comment Form Post processing
-add_action('pre_comment_on_post', 'fst4c_key_check');
 
 // ---------------------------------------------------------------------------- 
 // check for WP/PHP versions, and add inline errors for bad form data
