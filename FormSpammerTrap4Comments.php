@@ -4,7 +4,7 @@
 	* Plugin Name: FormSpammerTrap for Comments
 	* Plugin URI: http://FormSpammerTrap.com/wordpress-plugin-details.php
 	* Description: Stops Spam and Form bots from using your Comment forms without annoying Captchas, hidden fields, or other tricks that do not work. Looks for 'human activity' on the comment form; non-humans (bots) get sent to the <a href='http://www.FormSpammerTrap.com' target='_blank'>FormSpammerTrap.com</a> site, and their spam comment is discarded. Also allows you to limit the number of URLs in a message by removing excess URLs, and change text that appears before/after the comment form fields. Settings are in the Settings, 'FormSpammerTrap for Comment Settings' menu.
-	* Version: 1.05 
+	* Version: 1.06
 	* Author: Rick Hellewell
 	* Author URI: http://CellarWeb.com
 	* Text Domain: 
@@ -150,6 +150,24 @@ class MySettingsPage
 		);	  
 
 		add_settings_field(
+			'show_allowed_html', 
+			'Show allowed HTML code message after comment area?', 
+			array( $this, 'show_allowed_html_callback' ), 
+			'fst4c-setting-admin', 
+			'setting_section_id', // Section		   
+			array('fieldtype' => 'input', 'fieldsize' => '30', 'fieldmax' => '50')
+		);	  
+
+		add_settings_field(
+			'remove_html', 
+			'Remove all HTML tags from all fields?', 
+			array( $this, 'remove_html_callback' ), 
+			'fst4c-setting-admin', 
+			'setting_section_id', // Section		   
+			array('fieldtype' => 'input', 'fieldsize' => '30', 'fieldmax' => '50')
+		);	  
+
+		add_settings_field(
 			'urls_allowed', 
 			'Number of URLs allowed in comment area (most form spam contains multiple URLs; we recommend 1, max 9)', 
 			array( $this, 'urls_allowed_callback' ), 
@@ -259,6 +277,13 @@ class MySettingsPage
 		if( isset( $input['url_redacted'] ) ) 
 			$new_input['url_redacted'] = "1";
 
+		if( isset( $input['show_allowed_html'] ) ) 
+			$new_input['show_allowed_html'] = "1";
+
+// for verson 1.07 only
+		if( isset( $input['remove_html'] ) ) 
+			$new_input['remove_html'] = "1";
+
 		if( isset( $input['show_fst_message'] ) ) 
 			$new_input['show_fst_message'] = "1";
 
@@ -287,7 +312,7 @@ class MySettingsPage
 	public function print_section_info()
 	{
 		print '<h3><strong>Settings for FormSpammerTrap for Comments</strong></h3>';
-		print '<p><em>No HTML or code allowed in settings fields; it will be stripped out, leaving only plain text.</em> Note that some settings depend on other things, and some themes may not support all settings. See the notes to the right of each setting.</p>';
+		print '<p><em>No HTML or code allowed in the text boxes below; it will be stripped out, leaving only plain text.</em> Note that some settings depend on other things, and some themes may not support all settings. See the notes to the right of each setting.</p>';
 		print '<p>Save your settings once after upgrading to the latest version.</p>';
 	}
 
@@ -295,7 +320,7 @@ class MySettingsPage
 	public function the_version_callback()
 	{
 	   printf(
-			'<input type="text" type="hidden" id="the_version" name="fst4c_options[the_version]" value="1.05 (6-Mar-2015)" readonly="readonly" width="5" maxlength="5" />',
+			'<input type="text" type="hidden" id="the_version" name="fst4c_options[the_version]" value="1.06 (25-Jul-2015)" readonly="readonly" width="5" maxlength="5" />',
 			isset( $this->options['the_version'] ) ? esc_attr( $this->options['the_version']) : esc_attr( $this->options['the_version'])
 		);
 	}
@@ -317,6 +342,23 @@ class MySettingsPage
 			isset( $this->options['text_after'] ) ? esc_attr( $this->options['text_after']) : ''
 		);
 	}
+	// show allowed html callback
+	public function show_allowed_html_callback()	// require name and email checkbox
+	{
+	 printf(
+			"<table><tr><td><input type='checkbox' id='show_allowed_html' name='fst4c_options[show_allowed_html]'   value='1' " . checked( '1', $this->options[show_allowed_html] , false ) . " /></td><td valign='top'>Show a message about the  HTML codes that are allowed in the comment text area, placing that text after the comment area. Your current 'allowed html code' settings will show the following text in addition to any other text you specify after the comment textarea: <br><br>&nbsp;&nbsp;&nbsp;&nbsp;<em>The following HTML codes are allowed in the comment area: " . allowed_tags() . "</em><br><br><i>Do not enable this option if you have enabled the 'Remove all HTML tags' option below.</i></td></tr></table> ",
+			isset($this->options['show_allowed_html'] ) ?  '1' : '0'
+		);
+	}
+	// remove all html callback
+	public function remove_html_callback()	// remove all HTML codes
+	{
+	 printf(
+			"<table><tr><td><input type='checkbox' id='remove_html' name='fst4c_options[remove_html]'   value='1' " . checked( '1', $this->options[remove_html] , false ) . " /></td><td valign='top'>This will remove all HTML code from comments, even <strong>bold</strong> and <i>italic</i>, leaving just text and URLs. </i><br>Note that the plugin will always remove 'onmouseover' tags which may contain dangerous code; this option may give you additional protection.<br><i>Do not enable this option if you enable the 'Show allowed HTML code message' option.</i></td></tr></table> ",
+			isset($this->options['remove_html'] ) ?  '1' : '0'
+		);
+	}
+ 
 
 	// email required callback
 	public function name_email_req_callback()	// require name and email checkbox
@@ -377,7 +419,7 @@ class MySettingsPage
 	public function title_reply_callback()	// wrap the required text in the label area (needed for some themes)
 	{
 	 printf(
-			"<table><tr><td><input type='text' id='title_reply' name='fst4c_options[title_reply]'   value='%s' size='20' maxlength='20'/></td><td valign='top'>The text to replace the 'Leave a Reply' link. (no HTML, just text). Leave this blank to use the default text of 'Leave a Reply'. Limit of 20 characters.</td></tr></table> ",
+			"<table><tr><td><input type='text' id='title_reply' name='fst4c_options[title_reply]'   value='%s' size='30' maxlength='30'/></td><td valign='top'>The text to replace the 'Leave a Reply' link. (no HTML, just text). Leave this blank to use the default text of 'Leave a Reply'. Limit of 30 characters.</td></tr></table> ",
 			isset( $this->options['title_reply'] ) ? esc_attr( $this->options['title_reply']) : ''
 		);
 	}
@@ -386,7 +428,7 @@ class MySettingsPage
 	public function reply_to_text_callback()	// wrap the required text in the label area (needed for some themes)
 	{
 	 printf(
-			"<table><tr><td><input type='text' id='reply_to_text' name='fst4c_options[reply_to_text]'   value='%s' size='20' maxlength='20'/></td><td valign='top'>The text replace the 'Leave a Reply to name' link (no HTML, just text). Leave this blank to use the default text of 'Leave a Reply to name'. Limit of 20 characters.</td></tr></table> ",
+			"<table><tr><td><input type='text' id='reply_to_text' name='fst4c_options[reply_to_text]'   value='%s' size='30' maxlength='30'/></td><td valign='top'>The text replace the 'Leave a Reply to name' link (no HTML, just text). Leave this blank to use the default text of 'Leave a Reply to name'. Limit of 30 characters.</td></tr></table> ",
 			isset( $this->options['reply_to_text'] ) ? esc_attr( $this->options['reply_to_text']) : ''
 		);
 	}
@@ -395,7 +437,7 @@ class MySettingsPage
 	public function cancel_reply_link_callback()	// wrap the required text in the label area (needed for some themes)
 	{
 	 printf(
-			"<table><tr><td><input type='text' id='cancel_reply_link' name='fst4c_options[cancel_reply_link]'   value='%s' size='20' maxlength='20'/></td><td valign='top'>The text to replace the 'Cancel Reply' link (no HTML, just text). Leave this blank to use the default text of 'Cancel Reply'.  Limit of 20 characters. <em>Note: not used in all themes.</em></td></tr></table> ",
+			"<table><tr><td><input type='text' id='cancel_reply_link' name='fst4c_options[cancel_reply_link]'   value='%s' size='30' maxlength='30'/></td><td valign='top'>The text to replace the 'Cancel Reply' link (no HTML, just text). Leave this blank to use the default text of 'Cancel Reply'.  Limit of 30 characters. <em>Note: not used in all themes.</em></td></tr></table> ",
 			isset( $this->options['cancel_reply_link'] ) ? esc_attr( $this->options['cancel_reply_link']) : ''
 		);
 	}
@@ -404,7 +446,7 @@ class MySettingsPage
 	public function submit_label_callback()	// wrap the required text in the label area (needed for some themes)
 	{
 	 printf(
-			"<table><tr><td><input type='text' id='submit_label' name='fst4c_options[submit_label]'   value='%s' size='20' maxlength='20'/></td><td valign='top'>The text to put inside the Submit button (no HTML, just text). Leave this blank to use the default text of 'Post Comment'. Make sure that the 'Text Before' value contains the same text if you change the Submit button text. Limit of 20 characters.</td></tr></table> ",
+			"<table><tr><td><input type='text' id='submit_label' name='fst4c_options[submit_label]'   value='%s' size='30' maxlength='30'/></td><td valign='top'>The text to put inside the Submit button (no HTML, just text). Leave this blank to use the default text of 'Post Comment'. Make sure that the 'Text Before' value contains the same text if you change the Submit button text. Limit of 30 characters.</td></tr></table> ",
 			isset( $this->options['submit_label'] ) ? esc_attr( $this->options['submit_label']) : ''
 		);
 	}
@@ -480,6 +522,16 @@ add_action( 'comment_form', 'force_insert_fst_code' ,99);
 // add the cl function script
 add_action('comment_form', 'fst4c_cl_script',98);
 
+// only allow the tags we want; needs to be priority 9 to make sure it gets done
+// can see the result if you allow the 'HTML code' message to display
+// add_action('comment_form','fst4c_modify_tags',9);	 // adds the function to the comment_post action
+//add_action('init','fst4c_modify_tags',11);	 // adds the function to the comment_post action
+//add_action('comment_post','fst4c_modify_tags',9);	 // adds the function to the comment_post action
+
+// adjust the allowedtags
+global $allowedtags;
+fst4c_modify_tags();
+
 // ---------------------------------------------------------------------------- 
 // ---------------------------------------------------------------------------- 
 // ---------------------------------------------------------------------------- 
@@ -495,6 +547,9 @@ add_filter('comment_form_defaults', 'fst4c_modify_comment_form_text_area',9,1);
 // adjust after the comment form area
 add_filter('comment_form_defaults', 'fst4c_text_around_comment_form',9,1);
 
+// adjust the cancel comment reply link if specified
+add_filter( 'comment_form_defaults', 'fst4c_cancel_comment_reply_link',9,1 );
+
 // add reply to name thing
 add_filter('comment_reply_link', 'fst4c_adjust_title_reply',9,2);
 
@@ -509,6 +564,14 @@ add_action('comment_form', 'fst4c_add_key');
 
 // Add Nonce Check To Comment Form Post processing
 add_action('pre_comment_on_post', 'fst4c_key_check');
+
+// preprocess comment after submitted to remove any mouseover stuff
+add_filter( 'preprocess_comment' , 'remove_mouseover',2,1 ); 
+
+// preprocess comment after submitted to remove all htnk codes
+add_filter( 'preprocess_comment' , 'remove_html',2,1 ); 
+
+// ---------------------------------------------------------------------------- 
 
 // ---------------------------------------------------------------------------- 
 // end of add_actions and add_filters for posts/pages with comments open
@@ -606,13 +669,13 @@ function fst4c_comment_form_fields( $fields ) {
 	// get the required fields
 	'author' =>
 	'<p class="comment-form-author"><label for="author">' . __( 'Your Name', 'domainreference' ) .
-	( $req ? '<span class="required">' . $wrap_req_text . '</span>' . '</label> ' : '' ) .
+	( $req ? '<span class="required">' . $wrap_req_text . '</span>'  : '' ) . '</label>' .
 	'<input placeholder="Your Name ' . $aria_req_in_placeholder . ' " id="author" name="author" type="text" onclick="formspammertrap_CL();" onfocus="formspammertrap_CL();" value="' . esc_attr( $commenter['comment_author'] ) .
 	'" size="30"' . $aria_req . ' /></p>',
 	
 	'email' =>
 	'<p class="comment-form-email"><label for="email">' . __( 'Your Email', 'domainreference' )  .
-	( $req ? '<span class="required">' . $wrap_req_text . '</span>' . '</label> ' : '' ) .
+	( $req ? '<span class="required">' . $wrap_req_text . '</span>'  : '' ) . '</label>' .
 	'<input placeholder="Your Email ' . $aria_req_in_placeholder . ' " id="email" name="email" type="text"  onclick="formspammertrap_CL()" onfocus="formspammertrap_CL()" value="' . esc_attr(  $commenter['comment_author_email'] ) .
 	'" size="30"' . $aria_req . ' /></p>',
 	
@@ -657,7 +720,7 @@ function fst4c_modify_comment_form_text_area($arg) {
 	if ($xoptions['submit_label']) {$arg['label_submit'] = 	$xlabel_submit ;	}
 	if ($xoptions['title_reply']) {$arg['title_reply'] = '<p align="center">'. $xoptions['title_reply'] . '</p>';}
 	if ($xoptions['reply_to_text']) {$arg['reply_to_text'] =  $xoptions['reply_to_text'];}
-	if ($xoptions['cancel_reply_link ']) {$arg['cancel_reply_link'] =  $xoptions['cancel_reply_link'];}
+	
 
 	if ($xoptions['wrap_required_text']) {	$wrap_req_text = '<br>Required';} else {$wrap_req_text = '&nbsp;&nbsp;Required';	}
 
@@ -668,14 +731,36 @@ function fst4c_modify_comment_form_text_area($arg) {
 	}
 
 // ---------------------------------------------------------------------------- 
+// adjust the cancel comment reply link if specified
+
+function fst4c_cancel_comment_reply_link($arg) {
+	$xoptions = get_option( 'fst4c_options' );
+	
+	if ($xoptions['cancel_reply_link']) {$arg['cancel_reply_link'] =  __($xoptions['cancel_reply_link']);}
+	return $arg; 
+}
+
+// ---------------------------------------------------------------------------- 
 // set the message after the comment form
 function fst4c_text_around_comment_form($arg) {
-	$xoptions = get_option( 'fst4c_options' );
+	global $xoptions;
 	$xtext_before_comment = $xoptions['text_before'];
 	if ($xoptions[urls_allowed]) {
 		$xtext_before_comment .= ' <em>You are allowed to enter ' . $xoptions[urls_allowed] . ' URL(s) in the comment area.</em>'; } else {$xtext_before_comment .= ' <em>You are not allowed to enter any URLs in the comment area.</em>';
 	}
 	$xtext_after_comment = $xoptions['text_after'];
+	if ($xtext_before_comment) {
+		$arg['comment_notes_before'] = '<p class="form-allowed-tags" align="center">' . sprintf( __(  $xtext_before_comment )) . '</p>';
+	}
+	if ($xtext_before_comment) {
+		$arg['comment_notes_before'] = '<p class="form-allowed-tags" align="center">' . sprintf( __(  $xtext_before_comment )) . '</p>';
+	}
+	$xshow_allowed_html = $xoptions['show_allowed_html'];
+	if ($xshow_allowed_html) {
+		$xallowed_tags_msg = '<p>The following HTML codes are allowed in the comment area: ' . allowed_tags() . '</p>';
+		$xtext_after_comment .= $xallowed_tags_msg;}
+		
+	$xtext_after_comment .= '<p>' . $xoptions['text_after'] . '</p>';
 	if ($xtext_before_comment) {
 		$arg['comment_notes_before'] = '<p class="form-allowed-tags" align="center">' . sprintf( __(  $xtext_before_comment )) . '</p>';
 	}
@@ -804,7 +889,81 @@ function fst4c_add_key() {
 	wp_nonce_field('fst4c_key');
 }
  
- 
+function remove_mouseover($commentdata) {
+	global $commentdata;
+	global $xoptions;
+	
+	// regex to any 'onmouseover' junk
+    $re = "/<.*>|onmouseover.*\"|onmouseover.*'/i";
+	$str = $commentdata['comment_content'];
+    $subst = "";
+	// strip out any 'onmouseover' tags
+    $commentdata['comment_content'] = preg_replace($re, $subst, $str);
+	
+return $commentdata; 
+}
+
+// remove all html codes (for version 107 only, disabled for now)
+function remove_html($commentdata) {
+	global $commentdata;
+	global $xoptions;
+	if ($xoptions['remove_html']) {
+ 		$commentdata['comment_content'] = strip_tags_content($commentdata['comment_content']) ;
+	}
+	return $commentdata;
+}
+// function to strip all tags from $text, no matter where; from the php strip_tags manual comments
+function strip_tags_content($text, $tags = '', $invert = FALSE) {
+
+  preg_match_all('/<(.+?)[\s]*\/?[\s]*>/si', trim($tags), $tags);
+  $tags = array_unique($tags[1]);
+   
+  if(is_array($tags) AND count($tags) > 0) {
+    if($invert == FALSE) {
+      return preg_replace('@<(?!(?:'. implode('|', $tags) .')\b)(\w+)\b.*?>.*?</\1>@si', '', $text);
+    }
+    else {
+      return preg_replace('@<('. implode('|', $tags) .')\b.*?>.*?</\1>@si', '', $text);
+    }
+  }
+  elseif($invert == FALSE) {
+    return preg_replace('@<(\w+)\b.*?>.*?</\1>@si', '', $text);
+  }
+  return $text;
+} 
+
+function fst4c_modify_tags() {		// hint from http://www.goldenapplewebdesign.com/wordpress-take-control-of-html-tag-filtering/
+	global $allowedtags; 		// get the global thing
+	$allowedtags = array();
+$allowedtags = array(
+	'a' => array(
+        'href' => array (),
+        'title' => array ()),
+	'b' => array(),
+    'blockquote' => array(),
+    'cite' => array (),
+    'em' => array (), 
+	'i' => array (),
+    'strike' => array(),
+    'strong' => array(),
+);	
+
+//$allowedtags['a'] = array();  // this only allows the 'a' tag, not any sub-tags things
+return;
+}
+
+
+//function fst4c_allowed_tags( $tags ) {
+//	// Add <span> tag
+//	$tags['span'] = array(
+//		'id' 	=> array(), // Allow ID's in those spans
+//		'class' => array(), // Allow classes in those spans
+//		'style' => array() // Allow style in those spans
+//	);
+//	return $tags;
+//}
+//add_filter( 'themeblvd_allowed_tags', 'fst4c_allowed_tags' );
+
 // Check Nonce Field Validity
 function fst4c_key_check() {
 	if (!wp_verify_nonce($_REQUEST['_wpnonce'], 'fst4c_key')) {

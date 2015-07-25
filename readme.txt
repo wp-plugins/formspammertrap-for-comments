@@ -3,8 +3,8 @@ Contributors: Rick Hellewell
 Donate link: http://www.FormSpammerTrap.com/
 Tags: comments, spam, spambot protection, stop, form spam
 Requires at least: 4.0.1
-Tested up to: 4.1
-Stable tag: 1.05
+Tested up to: 4.2.3
+Stable tag: 1.06
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,7 +33,7 @@ This section describes how to install the plugin and get it working.
 
 == Frequently Asked Questions ==
 
-**  How do you block spam bots? **  
+**How do you block spam bots?**  
 
 We use a technique that looks for human interaction with the comment form. The name, email, and comment text area plus other required fields are all checked for this human interaction.
 
@@ -127,6 +127,16 @@ We do lots of WordPress sites: implementation, customization, and more. You can 
 
 == Changelog ==
 
+= 1.06 =
+* released 25 Jul 2015
+* fixed bug where the name/email fields would be truncated into the 'label' area if you selected the 'wrap required' function
+* added option to add commenter's name to the Reply link text
+* added option to show (or not) the 'allowed HTML code' text under the comment text box
+* added option to remove all HTML tags from all fields
+* added option to change the Reply To text
+* added option to change the Cancel Reply text
+* more code efficiencies
+
 = 1.05 = 
 * released 6 Mar 2015
 * fixed an obscure problem that caused improper redirecting on some versions of Internet Explorer.
@@ -177,7 +187,13 @@ We do lots of WordPress sites: implementation, customization, and more. You can 
 
 == Upgrade Notice ==
 
-= 1.06 =
+= 1.06x =
+Released xx Mar 2015
+* Fixed typo in readme that showed the 1.05 version in the Upgrade Notice section as 1.06
+* Minor trapping enhancements
+* some more code efficiencies, although the code is heavily commented for 'plugin code lurkers'
+
+= 1.05 =
 Released 2 Mar 2015. 
 * Fixed an obscure problem that caused improper redirecting on some versions of Internet Explorer.
 * More code efficiencies to allow pages to load faster, especially non-comment-enabled pages. 
