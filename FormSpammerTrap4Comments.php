@@ -4,7 +4,7 @@
 	* Plugin Name: FormSpammerTrap for Comments
 	* Plugin URI: http://FormSpammerTrap.com/wordpress-plugin-details.php
 	* Description: Stops Spam and Form bots from using your Comment forms without annoying Captchas, hidden fields, or other tricks that do not work. Looks for 'human activity' on the comment form; non-humans (bots) get sent to the <a href='http://www.FormSpammerTrap.com' target='_blank'>FormSpammerTrap.com</a> site, and their spam comment is discarded. Also allows you to limit the number of URLs in a message by removing excess URLs, and change text that appears before/after the comment form fields. Settings are in the Settings, 'FormSpammerTrap for Comment Settings' menu.
-	* Version: 1.06
+	* Version: 1.07
 	* Author: Rick Hellewell
 	* Author URI: http://CellarWeb.com
 	* Text Domain: 
@@ -320,7 +320,7 @@ class MySettingsPage
 	public function the_version_callback()
 	{
 	   printf(
-			'<input type="text" type="hidden" id="the_version" name="fst4c_options[the_version]" value="1.06 (25-Jul-2015)" readonly="readonly" width="5" maxlength="5" />',
+			'<input type="text" type="hidden" id="the_version" name="fst4c_options[the_version]" value="1.07 (30-Jul-2015)" readonly="readonly" width="5" maxlength="5" />',
 			isset( $this->options['the_version'] ) ? esc_attr( $this->options['the_version']) : esc_attr( $this->options['the_version'])
 		);
 	}
@@ -664,7 +664,7 @@ function fst4c_comment_form_fields( $fields ) {
 	if ($xoptions['wrap_required_text']) {	$wrap_req_text = '<br>Required';} else {$wrap_req_text = '&nbsp;&nbsp;Required';	}
 	$aria_req = ( $req ? " aria-required='true' required='true' " :" aria-required= 'false' required='false' " );
 	$aria_req_in_placeholder = ( $req ? '(* required) ':'' );
-	unset($GLOBALS[$fields]);		// clear out any existing comment form fields
+//	unset($GLOBALS[$fields]);		// clear out any existing comment form fields
 	$fields =  array(
 	// get the required fields
 	'author' =>

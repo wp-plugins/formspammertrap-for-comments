@@ -4,7 +4,7 @@ Donate link: http://www.FormSpammerTrap.com/
 Tags: comments, spam, spambot protection, stop, form spam
 Requires at least: 4.0.1
 Tested up to: 4.2.3
-Stable tag: 1.06
+Stable tag: 1.07
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -126,6 +126,14 @@ We do lots of WordPress sites: implementation, customization, and more. You can 
 1. The Comment form, using the settings as shown on screenshot 1. (assets/screenshot-2.jpg)
 
 == Changelog ==
+
+= 1.07 =
+* released 30 Jul 2015
+* testing to ensure compatability with WP version 4.2.3; should work just fine with 4.3
+
+= 1.06a = 
+* released 25 Jul 2015
+* Don't you hate it when you think you fixed everything, and another bug sneaks in, even after you did lots of testing? Me to. Which is why there is a 1.06a right after the 1.06. Sigh.
 
 = 1.06 =
 * released 25 Jul 2015
