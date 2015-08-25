@@ -3,8 +3,8 @@ Contributors: Rick Hellewell
 Donate link: http://www.FormSpammerTrap.com/
 Tags: comments, spam, spambot protection, stop, form spam
 Requires at least: 4.0.1
-Tested up to: 4.2.3
-Stable tag: 1.07
+Tested up to: 4.3
+Stable tag: 1.08
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,25 +33,25 @@ This section describes how to install the plugin and get it working.
 
 == Frequently Asked Questions ==
 
-**How do you block spam bots?**  
+= How do you block spam bots? =  
 
 We use a technique that looks for human interaction with the comment form. The name, email, and comment text area plus other required fields are all checked for this human interaction.
 
-** What happens to a spam bot filling out the form, or submitting form data via an automated process? ** 
+= What happens to a spam bot filling out the form, or submitting form data via an automated process? = 
 
 The spam bot is redirected to our FormSpammerTrap page at www.FormSpammerTrap.com . The comment is essentially 'thrown away'; it isn't added to your posts' comment. Your site doesn't even see the submission, which might reduce the load on a busy site.
 
-** But can't I block comment spam with (take your pick: captchas, hidden fields, CSS tricks, silly questions, whatever)? ** 
+= But can't I block comment spam with (take your pick: captchas, hidden fields, CSS tricks, silly questions, whatever)? = 
 
 Those techniques just don't work with modern spam-bots. Captchas are easily bypassed. Hidden fields are not hidden to the smarter spam bots, neither are CSS tricks that hide a field from display. And silly questions are just irritating.
 
 Our technique requires a human to interact with the form. Form spamming bots can't provide that interaction. And without that human interaction, submitting the form sends the submitter to our FormSpammerTrap.com site. The comment is never saved. So you don't see the form spam.
 
-** Does the technique also work with Contact Us forms? ** 
+= Does the technique also work with Contact Us forms? = 
 
 No, it is only for comments. But we have a free solution on our FormSpammerTrap.com web site that will apply the same techniques to Contact Us forms. It is easy to implement; it's just a template that should work with the theme you are using.
 
-** Are there things on my site that will not work with this plugin? ** 
+= Are there things on my site that will not work with this plugin? = 
 
 Perhaps. Any plugin that modifies the comment form might interfere with our technique. If you have problems, you can temporarily disable our plugin, or the other comment form plugin, and see if the problem re-occurs.
 
@@ -63,7 +63,7 @@ We have verified that it works properly with the WordPress "Twenty-" themes, plu
 
 The plugin does do some jquery stuff to try to insert the trapping techniques into the comment form. This may allow the plugin to work on many themes that might not stricly follow coding best practices.
 
-** When I activate the plugin, submitting a comment always redirects to the FormSpammerTrap site. Why? ** 
+= When I activate the plugin, submitting a comment always redirects to the FormSpammerTrap site. Why? = 
 
 As stated above, some themes don't follow proper WordPress coding standards as it relates to supporting changes to the comment form. Because our plugin uses standard WordPress functions to add functionality to the comment form, these themes ignore that standard coding and build their own forms. 
 
@@ -71,51 +71,51 @@ You can verify this by temporarily changing your theme to one that follows WordP
 
 The current version of our plugin does bypass some improper theme code as it relates to comment forms.
 
-** What about limiting the number of URLs in a comment? ** 
+= What about limiting the number of URLs in a comment? = 
 
 Our plugin does that too. Most comment form spammers will try to put lots of links in the comment. You can partially block that with the settings in the Discussion menu. We take it a step farther by letting you determine the number of URLs you want in a comment. The plugin then removes or overwrites the excess URLs from the comment.
 
-** What if I want something that shows when excess URLs are deleted? ** 
+= What if I want something that shows when excess URLs are deleted? = 
 
 The plugin provides for that also. You can determine if the excess URLs are deleted, or if they are replaced with '[URL Redacted]' text.
 
-** What about changing the text that shows before and after the comment form? ** 
+= What about changing the text that shows before and after the comment form? = 
 
 The plugin provides that also. In the FST4c Settings screen (under the Settings menu), you can enter the text that will be displayed before and after the comment form. We don't allow any formatting of that text, to prevent any security problems. Note that a logged-in user won't see the 'before the comment' text; this is a limitation in the WordPress core code. 
 
-** Anything else? ** 
+= Anything else? = 
 
 We've added some new features that allow you to change the text for the comment form, submit button, and more. There are also some tweaks you can enable to allow for how some themes display the comment form. Everything is in the settings screen. 
 
-** But what if I want the default text to show before and after comments? ** 
+= But what if I want the default text to show before and after comments? = 
 
 The plugin allows for that. Just leave those fields blank on the plugins' settings screen. 
 
-** What about the error message when a required field is not filled out? ** 
+= What about the error message when a required field is not filled out? = 
 
 The plugin shows the error message (such as "Please fill out required field (name)") while re-displaying the comment form, with the fields showing the data previously entered. The visitor can just fill in the required fields, and submit again.
 
-** What if I don't like how the plugin changes things? ** 
+= What if I don't like how the plugin changes things? = 
 
 You can just deactivate the plugin. Your settings will be saved if you want to reactivate later.
 
-** Does the plugin make changes to the database? ** 
+= Does the plugin make changes to the database? = 
 
 The plugin only adds one 'row' to the Options database, using standard WordPress functions. The plugin will read the values as needed, minimizing calls to the database to limit any overhead against the database.
 
-** Does the plugin require anything extra on the client (visitor) browser? ** 
+= Does the plugin require anything extra on the client (visitor) browser? = 
 
 Not that we are aware of. The things we do are done through standard WordPress calls, plus one bit of "DOM" access, which all modern browsers support. There should be no effect of the plugin on how the visitor interacts with your site. The visitor will not have to have Javascript installed (which is not a good idea in most cases). It works with the standard 'jQuery' code that WordPress already includes and uses.
 
-** Where can we go for support if there is a problem or question - or a new feature we think will be nifty? ** 
+= Where can we go for support if there is a problem or question - or a new feature we think will be nifty? = 
 
 You can use the plugin support page for questions. Or you can contact us directly via the Contact Us page at www.FormSpammerTrap.com . We usually respond within 24 hours (and are usually faster than that).
 
-** How much does the plugin cost? ** 
+= How much does the plugin cost? = 
 
 It's free, as is the Contact Us form template available on the http://www.FormSpammerTrap.com site. But there is a place to donate there, if you are so inclined. (And we will appreciate that inclination!)
 
-** What else do you do? ** 
+= What else do you do? = 
 
 We do lots of WordPress sites: implementation, customization, and more. You can find more info at our business site at www.CellarWeb.com .
 
@@ -126,6 +126,12 @@ We do lots of WordPress sites: implementation, customization, and more. You can 
 1. The Comment form, using the settings as shown on screenshot 1. (assets/screenshot-2.jpg)
 
 == Changelog ==
+= 1.08 =
+* released 25 Aug 2015
+* enhancement of the WP 'nonce' value to make it more effective, and compatible with other plugins
+* testing to ensure compability with WP version 4.3
+* minor changes to readme.txt file
+* better removal of the 'URL' field on comments
 
 = 1.07 =
 * released 30 Jul 2015
@@ -195,8 +201,19 @@ We do lots of WordPress sites: implementation, customization, and more. You can 
 
 == Upgrade Notice ==
 
-= 1.06x =
-Released xx Mar 2015
+= 1.08 =
+* released 25 Aug 2015
+* enhancement of the WP 'nonce' value to make it more effective, and compatible with other plugins
+* testing to ensure compability with WP version 4.3
+* minor changes to readme.txt file
+* better removal of the 'URL' field on comments
+
+= 1.07 =
+* released 30 Jul 2015
+* testing to ensure compatability with WP version 4.2.3; should work just fine with 4.3
+
+= 1.06 =
+* released 25 Jul 2015
 * Fixed typo in readme that showed the 1.05 version in the Upgrade Notice section as 1.06
 * Minor trapping enhancements
 * some more code efficiencies, although the code is heavily commented for 'plugin code lurkers'
@@ -209,7 +226,7 @@ Released 2 Mar 2015.
 * Save settings once after installing upgrade.
 
 = 1.04 =
-Released 22 Feb 2015. Many new features and options, plus enhanced spambot catching, even those evil-doers that try to bypass the comment form (think "CURL"). Added a settings link on the All Plugins page.  Added options to change the comment form text, reply links, and the text inside the submit button. Some minor code optimization. Check the Readme.txt for a full list of enhancements. Save the settings once after installing the upgrade.
+Released 22 Feb 2015. Many new features and options, plus enhanced spambot catching, even those evil-doers that try to bypass the comment form (think "CURL"). Added a settings link on the All Plugins page. Added options to change the comment form text, reply links, and the text inside the submit button. Some minor code optimization. Check the Readme.txt for a full list of enhancements. Save the settings once after installing the upgrade.
 
 = 1.03 =
 Released 19 Feb 2015 - added option for changing the text inside the Submit button, plus other new features and code cleanup

@@ -4,7 +4,7 @@
 	* Plugin Name: FormSpammerTrap for Comments
 	* Plugin URI: http://FormSpammerTrap.com/wordpress-plugin-details.php
 	* Description: Stops Spam and Form bots from using your Comment forms without annoying Captchas, hidden fields, or other tricks that do not work. Looks for 'human activity' on the comment form; non-humans (bots) get sent to the <a href='http://www.FormSpammerTrap.com' target='_blank'>FormSpammerTrap.com</a> site, and their spam comment is discarded. Also allows you to limit the number of URLs in a message by removing excess URLs, and change text that appears before/after the comment form fields. Settings are in the Settings, 'FormSpammerTrap for Comment Settings' menu.
-	* Version: 1.07
+	* Version: 1.08
 	* Author: Rick Hellewell
 	* Author URI: http://CellarWeb.com
 	* Text Domain: 
@@ -280,7 +280,6 @@ class MySettingsPage
 		if( isset( $input['show_allowed_html'] ) ) 
 			$new_input['show_allowed_html'] = "1";
 
-// for verson 1.07 only
 		if( isset( $input['remove_html'] ) ) 
 			$new_input['remove_html'] = "1";
 
@@ -320,7 +319,7 @@ class MySettingsPage
 	public function the_version_callback()
 	{
 	   printf(
-			'<input type="text" type="hidden" id="the_version" name="fst4c_options[the_version]" value="1.07 (30-Jul-2015)" readonly="readonly" width="5" maxlength="5" />',
+			'<input type="text" type="hidden" id="the_version" name="fst4c_options[the_version]" value="1.08 (25-Aug-2015)" readonly="readonly" width="5" maxlength="5" />',
 			isset( $this->options['the_version'] ) ? esc_attr( $this->options['the_version']) : esc_attr( $this->options['the_version'])
 		);
 	}
@@ -560,10 +559,10 @@ add_filter( 'preprocess_comment' , 'fst4c_comment_remove_url' );
 add_action('preprocess_comment', 'fst4c_url_field_catcher',8);
 
 // Add Nonce To Comment Form
-add_action('comment_form', 'fst4c_add_key');
+//add_action('comment_form', 'fst4c_add_key',2);
 
 // Add Nonce Check To Comment Form Post processing
-add_action('pre_comment_on_post', 'fst4c_key_check');
+//add_action('pre_comment_on_post', 'fst4c_key_check');
 
 // preprocess comment after submitted to remove any mouseover stuff
 add_filter( 'preprocess_comment' , 'remove_mouseover',2,1 ); 
@@ -886,7 +885,7 @@ return $commentdata;
 // based on http://www.daharveyjr.com/fighting-wordpress-comment-spam-with-a-nonce/
 // Generate Nonce
 function fst4c_add_key() {
-	wp_nonce_field('fst4c_key');
+	wp_nonce_field(fst4c_key_check,'fst4c_key');
 }
  
 function remove_mouseover($commentdata) {
@@ -903,7 +902,7 @@ function remove_mouseover($commentdata) {
 return $commentdata; 
 }
 
-// remove all html codes (for version 107 only, disabled for now)
+// remove all html codes 
 function remove_html($commentdata) {
 	global $commentdata;
 	global $xoptions;
